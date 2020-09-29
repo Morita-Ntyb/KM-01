@@ -28,8 +28,16 @@ Type-A - 2.1mm DCケーブルを自作する
 
 ## 使用ライブラリ
 
-PCA9685 秋月の商品ページから https://akizukidenshi.com/catalog/g/gK-10350/   
-SFE-SEN-13944 https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library
+PCA9685 秋月の商品ページから https://akizukidenshi.com/catalog/g/gK-10350/  
+
+SFE-SEN-13944 https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library  
+
+ExponentialSmoothFunc https://github.com/ttatsf/ExponentialSmoothFunc
+Copyright (c) 2016 ttatsf
+Released under the MIT license
+https://opensource.org/licenses/mit-license.php  
+
+
 
 ## I2C アドレス設定
 PCA 9685  0x40  
