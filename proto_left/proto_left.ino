@@ -2,7 +2,7 @@
 #include <SPI.h>
 #include <SparkFunLSM9DS1.h>
 #include <PCA9685.h>
-#include <ExponentialSmoothFunc.h>
+
 
 
 
@@ -14,9 +14,6 @@ PCA9685 pwm = PCA9685(0x40);
 LSM9DS1 imu;  //LSM9DS1のオブジェクトを作成
 
 #define PRINT_SPEED 50  //計算の周期 ms
-
-const long REACT_RATE = 12;
-ExponentialSmooth expSmooth( REACT_RATE );
 
 static unsigned long lastPrint = 0;
 
@@ -48,33 +45,9 @@ void loop()
   }
 
 
-   const long SMOOTHED_DATA_z = expSmooth((int)(imu.calcAccel(imu.az)*1000));
-
-    Serial.print("SA: ");
-    Serial.print(((SMOOTHED_DATA_z)/1000), 2);
-    Serial.println(" g");
-
-
-    
-    printAccel();
-
-    Serial.println();
-
-    
-    Serial.print(millis()-lastPrint);Serial.println("ms");
-    
-    lastPrint = millis(); // 前回の時間を更新
-/*
  if ((lastPrint + PRINT_SPEED) < millis())
   {
     
-   const long SMOOTHED_DATA_z = expSmooth((int)(imu.calcAccel(imu.az)*1000));
-
-    Serial.print("SA: ");
-    Serial.print(((SMOOTHED_DATA_z)/1000), 2);
-    Serial.println(" g");
-
-
     
     printAccel();
 
@@ -87,7 +60,7 @@ void loop()
     
   }
 
-*/
+
 }
 
 
