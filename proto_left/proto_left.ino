@@ -1,4 +1,4 @@
-#include <Wire.h>
+ #include <Wire.h>
 #include <SPI.h>
 #include <PCA9685.h>
 #include <SparkFunLSM9DS1.h>
@@ -25,7 +25,7 @@ double average(const double*, int);
 
 
 
-#define filterPoint 20  //移動平均フィルタのポイント数
+#define filterPoint 8  //移動平均フィルタのポイント数
 
 //移動平均フィルタ用のバッファー
 double xAccelBuffer[filterPoint];
