@@ -5,7 +5,6 @@
 
 
 
-
 PCA9685 pwm = PCA9685(0x40);
 
 #define SERVOMIN 150
@@ -18,7 +17,19 @@ LSM9DS1 imu;  //LSM9DS1のオブジェクトを作成
 static unsigned long lastPrint = 0;
 
 
+//プロトタイプ宣言
 void printAccel();
+void shiftArray();
+double average(const double* array, size_t size);
+
+
+
+#define filterPoint 10
+
+double xAccelBuffer[filterPoint];
+double yAccelBuffer[filterPoint];
+double zAccelBuffer[filterPoint];
+
 
 void setup()
 {
@@ -47,13 +58,18 @@ void loop()
 
  if ((lastPrint + PRINT_SPEED) < millis())
   {
+    shiftArray();
     
+    xAccelBuffer[0] = imu.calcAccel(imu.ax);
+    yAccelBuffer[0] = imu.calcAccel(imu.ay);
+    zAccelBuffer[0] = imu.calcAccel(imu.az);
     
     printAccel();
 
     Serial.println();
 
-    
+    Serial.println(average(zAccelBuffer, filterPoint));
+
     Serial.print(millis()-lastPrint);Serial.println("ms");
     
     lastPrint = millis(); // 前回の時間を更新
@@ -63,6 +79,37 @@ void loop()
 
 }
 
+void shiftArray()
+{
+  
+  
+  for(int i=filterPoint - 1 ; i > 0; i--)
+  {
+    xAccelBuffer[i] = xAccelBuffer[ i+1 ];
+  }
+  
+  for(int i=filterPoint - 1 ; i > 0; i--)
+  {
+    yAccelBuffer[i] = yAccelBuffer[ i+1 ];
+  }
+  
+  for(int i=filterPoint - 1 ; i > 0; i--)
+  {
+    zAccelBuffer[i] = zAccelBuffer[ i+1 ];
+  }
+  
+}
+
+
+double average(const double* array, size_t size)
+{
+    double result = 0;
+    for (size_t i = 0; i < size; ++i) {
+        result += array[i];
+    }
+    return result / (double)size;
+}
+    
 
 void printAccel()
 {
