@@ -20,11 +20,11 @@ static unsigned long lastPrint = 0;
 //プロトタイプ宣言
 void printAccel();
 void shiftArray();
-double average(const double* array, size_t size);
+double average(const double*, int);
 
 
 
-#define filterPoint 10
+#define filterPoint 20
 
 double xAccelBuffer[filterPoint];
 double yAccelBuffer[filterPoint];
@@ -58,7 +58,8 @@ void loop()
 
  if ((lastPrint + PRINT_SPEED) < millis())
   {
-    shiftArray();
+    
+    shiftArray(); 
     
     xAccelBuffer[0] = imu.calcAccel(imu.ax);
     yAccelBuffer[0] = imu.calcAccel(imu.ay);
@@ -66,11 +67,17 @@ void loop()
     
     printAccel();
 
+
+    //Serial.print("FA: ");
+    Serial.print(average(xAccelBuffer, filterPoint), 2);
+    Serial.print(", ");
+    Serial.print(average(yAccelBuffer, filterPoint), 2);
+    Serial.print(", ");
+    Serial.print(average(zAccelBuffer, filterPoint), 2);
+    Serial.println();
     Serial.println();
 
-    Serial.println(average(zAccelBuffer, filterPoint));
-
-    Serial.print(millis()-lastPrint);Serial.println("ms");
+    //Serial.print(millis()-lastPrint);Serial.println("ms");
     
     lastPrint = millis(); // 前回の時間を更新
     
@@ -83,45 +90,45 @@ void shiftArray()
 {
   
   
-  for(int i=filterPoint - 1 ; i > 0; i--)
+  for(int i=filterPoint -1 ; i > 0; --i)
   {
-    xAccelBuffer[i] = xAccelBuffer[ i+1 ];
+    xAccelBuffer[i] = xAccelBuffer[ i-1 ];
   }
   
-  for(int i=filterPoint - 1 ; i > 0; i--)
+  for(int i=filterPoint -1 ; i > 0; --i)
   {
-    yAccelBuffer[i] = yAccelBuffer[ i+1 ];
+    yAccelBuffer[i] = yAccelBuffer[ i-1 ];
   }
   
-  for(int i=filterPoint - 1 ; i > 0; i--)
+  for(int i=filterPoint -1 ; i > 0; --i)
   {
-    zAccelBuffer[i] = zAccelBuffer[ i+1 ];
+    zAccelBuffer[i] = zAccelBuffer[ i-1 ];
   }
   
 }
 
 
-double average(const double* array, size_t size)
+double average(const double* array, int size)
 {
     double result = 0;
-    for (size_t i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) 
+    {
         result += array[i];
     }
-    return result / (double)size;
+    return (result / (double)size ) ;
 }
     
 
 void printAccel()
 {
 
-  Serial.print("A: ");
-
+  //Serial.print("A: ");
   Serial.print(imu.calcAccel(imu.ax), 2);
   Serial.print(", ");
   Serial.print(imu.calcAccel(imu.ay), 2);
   Serial.print(", ");
   Serial.print(imu.calcAccel(imu.az), 2);
-  Serial.println(" g");
+  Serial.print(", ");
 
 }
 
