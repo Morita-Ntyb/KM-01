@@ -48,6 +48,22 @@ static double e2 = 105.8476 ;
 static double e3 = 0;
 static double f1 = 219.1524;
 
+static double g1 = -76.4952;
+static double g2 = 105.8476 ;
+static double g3 = -87.7931;
+static double h1 = 0;
+static double h2 = 105.8476 ;
+static double h3 = 0;
+static double i1 = 219.1524;
+
+static double j1 = -84.8004;
+static double j2 = 196.5143 ;
+static double j3 = -97.3249;
+static double k1 = 0;
+static double k2 = 96.5476 ;
+static double k3 = 0;
+static double l1 = 200.4857;
+
 void setup()
 {
   pwm.begin();                   //初期設定
@@ -102,9 +118,16 @@ void loop()
                      + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
     double servoDeg2 = d1*yFAccel*yFAccel*yFAccel + d2*yFAccel*yFAccel + d3*yFAccel
                      + e1*zFAccel*zFAccel*zFAccel + e2*zFAccel*zFAccel + e3*zFAccel + f1;
-   
+
+    double servoDeg3 = g1*xFAccel*xFAccel*xFAccel + g2*xFAccel*xFAccel + g3*xFAccel
+                     + h1*zFAccel*zFAccel*zFAccel + h2*zFAccel*zFAccel + h3*zFAccel + i1;
+    double servoDeg4 = j1*yFAccel*yFAccel*yFAccel + j2*yFAccel*yFAccel + j3*yFAccel
+                     + k1*zFAccel*zFAccel*zFAccel + k2*zFAccel*zFAccel + k3*zFAccel + l1;
+                     
     pwm.setPWM(1, 0, servoDeg1);
     pwm.setPWM(0, 0, servoDeg2);
+    pwm.setPWM(3, 0, servoDeg3);
+    pwm.setPWM(2, 0, servoDeg4);
     
     lastPrint = millis(); // 前回の時間を更新
 
