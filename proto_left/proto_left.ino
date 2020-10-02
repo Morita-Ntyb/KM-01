@@ -47,6 +47,8 @@ void setup()
     while (1);
   }
 
+servo_write(0,90);
+servo_write(1,90);
 }
 
 void loop()
@@ -57,8 +59,6 @@ void loop()
   {
     imu.readAccel(); //IMUの値を更新
   }
-
-servo_write(0,180);servo_write(1,180);
 
 
  if ((lastPrint + PRINT_SPEED) < millis())
