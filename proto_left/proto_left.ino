@@ -1,13 +1,15 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <PCA9685.h>
+#include <SparkFunLSM9DS1.h>
 
 
 
 PCA9685 pwm = PCA9685(0x40);//オブジェクト, アドレス指定
 
-#define SERVOMIN 150
-#define SERVOMAX 600 //サーボのパルス幅を設定
+#define SERVOMIN 150 //1周期4096(ステップ)に対するサーボのパルス幅(ステップ)
+#define SERVOMAX 500 //
+#define PWMFREQ 50  //PWM周期
 
 LSM9DS1 imu;  //LSM9DS1のオブジェクトを作成
 
@@ -34,7 +36,7 @@ double zAccelBuffer[filterPoint];
 void setup()
 {
   pwm.begin();                   //初期設定
-  pwm.setPWMFreq(60);            //PWM周期を60Hzに設定
+  pwm.setPWMFreq(PWMFREQ);       //PWM周期を設定
 
   Serial.begin(115200);         // テスト用途のシリアル通信
 
@@ -55,6 +57,8 @@ void loop()
   {
     imu.readAccel(); //IMUの値を更新
   }
+
+servo_write(0,180);servo_write(1,180);
 
 
  if ((lastPrint + PRINT_SPEED) < millis())
