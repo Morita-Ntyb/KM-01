@@ -40,6 +40,13 @@ static double b2 = 105.8476 ;
 static double b3 = 0;
 static double c1 = 219.1524;
 
+static double d1 = -76.4952;
+static double d2 = 105.8476 ;
+static double d3 = -87.7931;
+static double e1 = 0;
+static double e2 = 105.8476 ;
+static double e3 = 0;
+static double f1 = 219.1524;
 
 void setup()
 {
@@ -93,8 +100,11 @@ void loop()
 
     double servoDeg1 = a1*xFAccel*xFAccel*xFAccel + a2*xFAccel*xFAccel + a3*xFAccel
                      + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
+    double servoDeg2 = d1*yFAccel*yFAccel*yFAccel + d2*yFAccel*yFAccel + d3*yFAccel
+                     + e1*zFAccel*zFAccel*zFAccel + e2*zFAccel*zFAccel + e3*zFAccel + f1;
    
     pwm.setPWM(1, 0, servoDeg1);
+    pwm.setPWM(0, 0, servoDeg2);
     
     lastPrint = millis(); // 前回の時間を更新
 
