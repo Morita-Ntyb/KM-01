@@ -5,7 +5,7 @@
 
 
 
-PCA9685 pwm = PCA9685(0x40);
+PCA9685 pwm = PCA9685(0x40);//オブジェクト, アドレス指定
 
 #define SERVOMIN 150
 #define SERVOMAX 600 //サーボのパルス幅を設定
@@ -24,8 +24,9 @@ double average(const double*, int);
 
 
 
-#define filterPoint 20
+#define filterPoint 20  //移動平均フィルタのポイント数
 
+//移動平均フィルタ用のバッファー
 double xAccelBuffer[filterPoint];
 double yAccelBuffer[filterPoint];
 double zAccelBuffer[filterPoint];
@@ -39,6 +40,7 @@ void setup()
   Serial.begin(115200);         // テスト用途のシリアル通信
 
   Wire.begin();                  // I2Cを開く
+  
   if (imu.begin() == false) // with no arguments, this uses default addresses (AG:0x6B, M:0x1E) and i2c port (Wire).
   {
     while (1);
@@ -52,23 +54,22 @@ void loop()
   
   if ( imu.accelAvailable() )
   {
-    imu.readAccel();
+    imu.readAccel(); //IMUの値を更新
   }
 
 
  if ((lastPrint + PRINT_SPEED) < millis())
   {
     
-    shiftArray(); 
-    
+    shiftArray(); //配列を一つ後ろにずらす
+
+    //配列の先頭にセンサー値を代入する
     xAccelBuffer[0] = imu.calcAccel(imu.ax);
     yAccelBuffer[0] = imu.calcAccel(imu.ay);
     zAccelBuffer[0] = imu.calcAccel(imu.az);
     
     printAccel();
 
-
-    //Serial.print("FA: ");
     Serial.print(average(xAccelBuffer, filterPoint), 2);
     Serial.print(", ");
     Serial.print(average(yAccelBuffer, filterPoint), 2);
@@ -76,8 +77,6 @@ void loop()
     Serial.print(average(zAccelBuffer, filterPoint), 2);
     Serial.println();
     Serial.println();
-
-    //Serial.print(millis()-lastPrint);Serial.println("ms");
     
     lastPrint = millis(); // 前回の時間を更新
     
@@ -122,7 +121,6 @@ double average(const double* array, int size)
 void printAccel()
 {
 
-  //Serial.print("A: ");
   Serial.print(imu.calcAccel(imu.ax), 2);
   Serial.print(", ");
   Serial.print(imu.calcAccel(imu.ay), 2);
