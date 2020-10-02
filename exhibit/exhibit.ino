@@ -13,7 +13,7 @@ PCA9685 pwm = PCA9685(0x40);//オブジェクト, アドレス指定
 
 LSM9DS1 imu;  //LSM9DS1のオブジェクトを作成
 
-#define PRINT_SPEED 50  //計算の周期 ms
+#define PRINT_SPEED 20  //計算の周期 ms
 
 static unsigned long lastPrint = 0;
 
@@ -25,7 +25,7 @@ double average(const double*, int);
 
 
 
-#define filterPoint 8  //移動平均フィルタのポイント数
+#define filterPoint 15  //移動平均フィルタのポイント数
 
 //移動平均フィルタ用のバッファー
 double xAccelBuffer[filterPoint];
