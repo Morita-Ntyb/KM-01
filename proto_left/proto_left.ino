@@ -32,6 +32,14 @@ double xAccelBuffer[filterPoint];
 double yAccelBuffer[filterPoint];
 double zAccelBuffer[filterPoint];
 
+static double a1 = -39.3404;
+static double a2 = 27.5143;
+static double a3 = -45.1507;
+static double b1 = 0;
+static double b2 = 27.5143;
+static double b3 = 0;
+static double c1 = 62.4857;
+
 
 void setup()
 {
@@ -47,8 +55,6 @@ void setup()
     while (1);
   }
 
-servo_write(0,90);
-servo_write(1,90);
 }
 
 void loop()
@@ -72,17 +78,26 @@ void loop()
     zAccelBuffer[0] = imu.calcAccel(imu.az);
     
     printAccel();
+    
+    double xFAccel = average(xAccelBuffer, filterPoint);
+    double yFAccel = average(yAccelBuffer, filterPoint);
+    double zFAccel = average(zAccelBuffer, filterPoint);
 
-    Serial.print(average(xAccelBuffer, filterPoint), 2);
+    Serial.print(xFAccel, 2);
     Serial.print(", ");
-    Serial.print(average(yAccelBuffer, filterPoint), 2);
+    Serial.print(yFAccel, 2);
     Serial.print(", ");
-    Serial.print(average(zAccelBuffer, filterPoint), 2);
+    Serial.print(zFAccel, 2);
     Serial.println();
     Serial.println();
+
+    double servoDeg1 = a1*xFAccel*xFAccel*xFAccel + a2*xFAccel*xFAccel + a3*xFAccel
+                     + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
+
+    servo_write(1,servoDeg1);
     
     lastPrint = millis(); // 前回の時間を更新
-    
+
   }
 
 
