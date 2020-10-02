@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <SPI.h>
-#include <SparkFunLSM9DS1.h>
 #include <PCA9685.h>
 
 
