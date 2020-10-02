@@ -32,13 +32,13 @@ double xAccelBuffer[filterPoint];
 double yAccelBuffer[filterPoint];
 double zAccelBuffer[filterPoint];
 
-static double a1 = -39.3404;
-static double a2 = 27.5143;
-static double a3 = -45.1507;
+static double a1 = 76.4952;
+static double a2 = 105.8476 ;
+static double a3 = 87.7931;
 static double b1 = 0;
-static double b2 = 27.5143;
+static double b2 = 105.8476 ;
 static double b3 = 0;
-static double c1 = 62.4857;
+static double c1 = 219.1524;
 
 
 void setup()
@@ -93,8 +93,8 @@ void loop()
 
     double servoDeg1 = a1*xFAccel*xFAccel*xFAccel + a2*xFAccel*xFAccel + a3*xFAccel
                      + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
-
-    servo_write(1,servoDeg1);
+   
+    pwm.setPWM(1, 0, servoDeg1);
     
     lastPrint = millis(); // 前回の時間を更新
 
@@ -146,10 +146,4 @@ void printAccel()
   Serial.print(imu.calcAccel(imu.az), 2);
   Serial.print(", ");
 
-}
-
-void servo_write(int ch, int ang)
-{ //動かすサーボチャンネルと角度を指定
-  ang = map(ang, 0, 180, SERVOMIN, SERVOMAX); //角度（0～180）をPWMのパルス幅（150～600）に変換
-  pwm.setPWM(ch, 0, ang);
 }
