@@ -23,6 +23,7 @@ void printAccel();
 void shiftArray();
 double average(const double*, int);
 
+void startUpSequence();
 
 
 #define filterPoint 15  //移動平均フィルタのポイント数
@@ -77,6 +78,8 @@ void setup()
   {
     while (1);
   }
+
+  startUpSequence();
 
 }
 
@@ -179,4 +182,41 @@ void printAccel()
   Serial.print(imu.calcAccel(imu.az), 2);
   Serial.print(", ");
 
+}
+
+
+void startUpSequence()
+{
+    pwm.setPWM(1, 0, servoDeg1); //左 さげ
+    delay(450);
+    pwm.setPWM(0, 0, servoDeg2); //右 さげ
+    delay(450);
+    
+    pwm.setPWM(3, 0, servoDeg3); //左 あげ
+    delay(450);
+    pwm.setPWM(2, 0, servoDeg4); //右 あげ
+    delay(450);
+
+    pwm.setPWM(2, 0, servoDeg4); //左 さげ
+    pwm.setPWM(2, 0, servoDeg4); //右 さげ
+    delay(240);
+    pwm.setPWM(2, 0, servoDeg4); //左 あげ
+    pwm.setPWM(2, 0, servoDeg4); //右 あげ
+
+    delay(220);
+    delay(500);
+
+    pwm.setPWM(2, 0, servoDeg4); //左 あげ
+    pwm.setPWM(2, 0, servoDeg4); //右 あげ
+
+    delay(1100);
+    
+
+    //ゆっくり上げ(チルト) 1500ms
+
+    delay(900);
+
+    pwm.setPWM(2, 0, servoDeg4); //左 さげ
+    pwm.setPWM(2, 0, servoDeg4); //右 さげ
+    //140
 }
