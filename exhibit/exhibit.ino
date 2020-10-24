@@ -1,4 +1,4 @@
- #include <Wire.h>
+#include <Wire.h>
 #include <SPI.h>
 #include <PCA9685.h>
 #include <SparkFunLSM9DS1.h>
@@ -7,15 +7,11 @@
 
 PCA9685 pwm = PCA9685(0x40);//オブジェクト, アドレス指定
 
-#define SERVOMIN 150 //1周期4096(ステップ)に対するサーボのパルス幅(ステップ)
-#define SERVOMAX 500 //
+#define SERVOMIN 205 //1周期4096(ステップ)に対するサーボのパルス幅(ステップ)
+#define SERVOMAX 983 //
 #define PWMFREQ 50  //PWM周期
 
 LSM9DS1 imu;  //LSM9DS1のオブジェクトを作成
-
-#define PRINT_SPEED 20  //計算の周期 ms
-
-static unsigned long lastPrint = 0;
 
 
 //プロトタイプ宣言
@@ -25,52 +21,52 @@ double average(const double*, int);
 
 void startUpSequence();
 
-
-#define filterPoint 15  //移動平均フィルタのポイント数
+#define filterPoint 80  //移動平均フィルタのポイント数
 
 //移動平均フィルタ用のバッファー
 double xAccelBuffer[filterPoint];
 double yAccelBuffer[filterPoint];
 double zAccelBuffer[filterPoint];
 
-static double a1 = 76.4952;
-static double a2 = 105.8476 ;
-static double a3 = 87.7931;
+static double a1 = -170.2564;
+static double a2 = 195.3476;
+static double a3 = -195.4023;
 static double b1 = 0;
-static double b2 = 105.8476 ;
+static double b2 = 195.3476;
 static double b3 = 0;
-static double c1 = 219.1524;
+static double c1 = 398.1524;
 
-static double d1 = -76.4952;
-static double d2 = 105.8476 ;
-static double d3 = -87.7931;
+
+static double d1 = -170.2564;
+static double d2 = 195.3476;
+static double d3 = -195.4023;
 static double e1 = 0;
-static double e2 = 105.8476 ;
+static double e2 = 195.3476;
 static double e3 = 0;
-static double f1 = 219.1524;
+static double f1 = 398.1524;
 
-static double g1 = -76.4952;
-static double g2 = 105.8476 ;
-static double g3 = -87.7931;
+static double g1 = 170.2564;
+static double g2 = 195.3476;
+static double g3 = 195.4023;
 static double h1 = 0;
-static double h2 = 105.8476 ;
+static double h2 = 195.3476;
 static double h3 = 0;
-static double i1 = 219.1524;
+static double i1 = 398.1524;
 
-static double j1 = -84.8004;
-static double j2 = 196.5143 ;
-static double j3 = -97.3249;
+static double j1 = -170.2564;
+static double j2 = 195.3476;
+static double j3 = -195.4023;
 static double k1 = 0;
-static double k2 = 96.5476 ;
+static double k2 = 195.3476;
 static double k3 = 0;
-static double l1 = 200.4857;
+static double l1 = 398.1524;
+
+
 
 void setup()
 {
   pwm.begin();                   //初期設定
   pwm.setPWMFreq(PWMFREQ);       //PWM周期を設定
-
-  Serial.begin(115200);         // テスト用途のシリアル通信
 
   Wire.begin();                  // I2Cを開く
   
@@ -79,7 +75,7 @@ void setup()
     while (1);
   }
 
-  startUpSequence();
+  //startUpSequence();
 
 }
 
@@ -93,49 +89,35 @@ void loop()
   }
 
 
- if ((lastPrint + PRINT_SPEED) < millis())
-  {
-    
-    shiftArray(); //配列を一つ後ろにずらす
+  shiftArray(); //配列を一つ後ろにずらす
 
-    //配列の先頭にセンサー値を代入する
-    xAccelBuffer[0] = imu.calcAccel(imu.ax);
-    yAccelBuffer[0] = imu.calcAccel(imu.ay);
-    zAccelBuffer[0] = imu.calcAccel(imu.az);
-    
-    printAccel();
-    
-    double xFAccel = average(xAccelBuffer, filterPoint);
-    double yFAccel = average(yAccelBuffer, filterPoint);
-    double zFAccel = average(zAccelBuffer, filterPoint);
+  //配列の先頭にセンサー値を代入する
+  xAccelBuffer[0] = imu.calcAccel(imu.ax);
+  yAccelBuffer[0] = imu.calcAccel(imu.ay);
+  zAccelBuffer[0] = imu.calcAccel(imu.az);
+  
+  printAccel();
+  
+  double xFAccel = average(xAccelBuffer, filterPoint);
+  double yFAccel = average(yAccelBuffer, filterPoint);
+  double zFAccel = average(zAccelBuffer, filterPoint);
 
-    Serial.print(xFAccel, 2);
-    Serial.print(", ");
-    Serial.print(yFAccel, 2);
-    Serial.print(", ");
-    Serial.print(zFAccel, 2);
-    Serial.println();
-    Serial.println();
 
-    double servoDeg1 = a1*xFAccel*xFAccel*xFAccel + a2*xFAccel*xFAccel + a3*xFAccel
-                     + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
-    double servoDeg2 = d1*yFAccel*yFAccel*yFAccel + d2*yFAccel*yFAccel + d3*yFAccel
-                     + e1*zFAccel*zFAccel*zFAccel + e2*zFAccel*zFAccel + e3*zFAccel + f1;
+  double servoDeg1 = a1*xFAccel*xFAccel*xFAccel + a2*xFAccel*xFAccel + a3*xFAccel
+                   + b1*zFAccel*zFAccel*zFAccel + b2*zFAccel*zFAccel + b3*zFAccel + c1;
+  double servoDeg2 = d1*yFAccel*yFAccel*yFAccel + d2*yFAccel*yFAccel + d3*yFAccel
+                   + e1*zFAccel*zFAccel*zFAccel + e2*zFAccel*zFAccel + e3*zFAccel + f1;
 
-    double servoDeg3 = g1*xFAccel*xFAccel*xFAccel + g2*xFAccel*xFAccel + g3*xFAccel
-                     + h1*zFAccel*zFAccel*zFAccel + h2*zFAccel*zFAccel + h3*zFAccel + i1;
-    double servoDeg4 = j1*yFAccel*yFAccel*yFAccel + j2*yFAccel*yFAccel + j3*yFAccel
-                     + k1*zFAccel*zFAccel*zFAccel + k2*zFAccel*zFAccel + k3*zFAccel + l1;
-                     
-    pwm.setPWM(1, 0, servoDeg1);
-    pwm.setPWM(0, 0, servoDeg2);
-    pwm.setPWM(3, 0, servoDeg3);
-    pwm.setPWM(2, 0, servoDeg4);
-    
-    lastPrint = millis(); // 前回の時間を更新
-
-  }
-
+  double servoDeg3 = g1*yFAccel*yFAccel*yFAccel + g2*yFAccel*yFAccel + g3*yFAccel
+                   + h1*zFAccel*zFAccel*zFAccel + h2*zFAccel*zFAccel + h3*zFAccel + i1;
+  double servoDeg4 = j1*xFAccel*xFAccel*xFAccel + j2*xFAccel*xFAccel + j3*xFAccel
+                   + k1*zFAccel*zFAccel*zFAccel + k2*zFAccel*zFAccel + k3*zFAccel + l1;
+                   
+  pwm.setPWM(0, 0, (int)((servoDeg1+0.5)/2.0));
+  pwm.setPWM(2, 0, (int)((servoDeg2+0.5)/2.0));
+  pwm.setPWM(13, 0, (int)((servoDeg3+0.5)/2.0));
+  pwm.setPWM(15, 0, (int)((servoDeg4+0.5)/2.0));
+  
 
 }
 
@@ -172,19 +154,7 @@ double average(const double* array, int size)
 }
     
 
-void printAccel()
-{
-
-  Serial.print(imu.calcAccel(imu.ax), 2);
-  Serial.print(", ");
-  Serial.print(imu.calcAccel(imu.ay), 2);
-  Serial.print(", ");
-  Serial.print(imu.calcAccel(imu.az), 2);
-  Serial.print(", ");
-
-}
-
-
+/*
 void startUpSequence()
 {
     pwm.setPWM(1, 0, servoDeg1); //左 さげ
@@ -219,4 +189,4 @@ void startUpSequence()
     pwm.setPWM(2, 0, servoDeg4); //左 さげ
     pwm.setPWM(2, 0, servoDeg4); //右 さげ
     //140
-}
+}*/
