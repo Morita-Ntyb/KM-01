@@ -61,7 +61,7 @@ static double k2 = 195.3476;
 static double k3 = 0;
 static double l1 = 398.1524;
 
-
+char serial_string[25];
 
 void setup()
 {
@@ -88,6 +88,10 @@ void loop()
     imu.readAccel(); //IMUの値を更新
   }
 
+  if (Serial.available() == True)
+  {
+    serial_string = Serial.readStringUntil("\n");
+  }
 
   shiftArray(); //配列を一つ後ろにずらす
 
