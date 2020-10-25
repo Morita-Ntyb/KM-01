@@ -10,6 +10,8 @@ void setup()
 {  
   
   Serial.begin(9600);
+  pinMode(3, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
 
 }
 
@@ -25,6 +27,9 @@ void loop()
   Serial.print(potentiometer0_Value);
   Serial.print(",");
   Serial.println(potentiometer0_Value);
+  Serial.print(digitalRead(3)*1000);
+  Serial.print(",");
+  Serial.println(digitalRead(7)*1000);
 
   delay(2); //ADC待機のため
   
