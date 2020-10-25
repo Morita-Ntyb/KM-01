@@ -32,6 +32,6 @@ void loop()
   Serial.print(",");
   Serial.println(digitalRead(7)*1000);
 
-  delay(2); //ADC待機のため
-  
+  delay(10);
+
 }
