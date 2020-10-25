@@ -24,9 +24,10 @@ void loop()
 
   Serial.print(potentiometer0_Value);
   Serial.print(",");
-  Serial.print(potentiometer0_Value);
+  Serial.print(potentiometer1_Value);
   Serial.print(",");
-  Serial.println(potentiometer0_Value);
+  Serial.print(potentiometer2_Value);
+  Serial.print(",");
   Serial.print(digitalRead(3)*1000);
   Serial.print(",");
   Serial.println(digitalRead(7)*1000);
