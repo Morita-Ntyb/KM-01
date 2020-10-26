@@ -62,6 +62,7 @@ static double k3 = 0;
 static double l1 = 398.1524;
 
 char serial_string[25];
+int serial_counter = 0;
 
 void setup()
 {
@@ -88,9 +89,19 @@ void loop()
     imu.readAccel(); //IMUの値を更新
   }
 
-  if (Serial.available() == True)
-  {
-    serial_string = Serial.readStringUntil("\n");
+  if (Serial.available() > 0)
+  { 
+    serial_string[serial_counter] = Serial.readStringUntil("\n");
+
+    if (serial_string[serial_counter] == '\0')
+    {
+      
+      serial_counter = 0;
+    }
+    else
+    {
+      serial_counter ++ ;
+    }
   }
 
   shiftArray(); //配列を一つ後ろにずらす
@@ -99,9 +110,7 @@ void loop()
   xAccelBuffer[0] = imu.calcAccel(imu.ax);
   yAccelBuffer[0] = imu.calcAccel(imu.ay);
   zAccelBuffer[0] = imu.calcAccel(imu.az);
-  
-  printAccel();
-  
+
   double xFAccel = average(xAccelBuffer, filterPoint);
   double yFAccel = average(yAccelBuffer, filterPoint);
   double zFAccel = average(zAccelBuffer, filterPoint);
