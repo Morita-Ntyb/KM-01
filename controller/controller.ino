@@ -1,3 +1,5 @@
+#include <Wire.h>
+
 const int potentiometer0 = A0;
 const int potentiometer1 = A1;
 const int potentiometer2 = A2;
