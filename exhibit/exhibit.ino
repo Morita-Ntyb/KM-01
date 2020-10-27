@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
-#include <PCA9685.h>
-#include <SparkFunLSM9DS1.h>
+#include <PCA9685.h> //https://akizukidenshi.com/catalog/g/gK-10350/
+#include <SparkFunLSM9DS1.h> //https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library
 
 
 
@@ -61,8 +61,8 @@ static double k2 = 195.3476;
 static double k3 = 0;
 static double l1 = 398.1524;
 
-char serial_string[25];
-int serial_counter = 0;
+char serial_string[25]; //シリアル通信 バッファ
+int serial_int[4];
 
 void setup()
 {
@@ -76,6 +76,15 @@ void setup()
     while (1);
   }
 
+  while(1)
+  {
+    serial_string[0] = Serial.read();
+    if(serial_string[0] == '\0')
+    {
+      break;
+    }
+  }
+  
   //startUpSequence();
 
 }
@@ -89,20 +98,21 @@ void loop()
     imu.readAccel(); //IMUの値を更新
   }
 
-  if (Serial.available() > 0)
+  if (Serial.available() >= 22)
   { 
-    serial_string[serial_counter] = Serial.readStringUntil("\n");
+    for(int i=0; i<=22; i++)
+    {
+      serial_string[i] = Serial.read();
+  
+      if (serial_string[i] == '\0')
+      {
+        break;        
+      }
 
-    if (serial_string[serial_counter] == '\0')
-    {
-      
-      serial_counter = 0;
-    }
-    else
-    {
-      serial_counter ++ ;
     }
   }
+
+  //ここにchar型配列をint型に変換する関数を挿入 serial_string >> serial_int
 
   shiftArray(); //配列を一つ後ろにずらす
 
