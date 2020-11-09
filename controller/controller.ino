@@ -8,6 +8,22 @@ int potentiometer0_Value = 0;
 int potentiometer1_Value = 0;
 int potentiometer2_Value = 0;
 
+void print_4_digi(int value)
+{
+  // 1234
+
+  Serial.print(value % 10);
+  value /= 10;
+  Serial.print(value % 10);
+  value /= 10;
+  Serial.print(value % 10);
+  value /= 10;
+  Serial.print(value % 10);
+  value /= 10;
+
+  //4, 3, 2, 1
+}
+
 void setup() 
 {  
   
@@ -24,16 +40,21 @@ void loop()
   potentiometer1_Value = analogRead(potentiometer1);
   potentiometer2_Value = analogRead(potentiometer2);
 
-  Serial.print(potentiometer0_Value);
-  Serial.print(",");
-  Serial.print(potentiometer1_Value);
-  Serial.print(",");
-  Serial.print(potentiometer2_Value);
-  Serial.print(",");
-  Serial.print(digitalRead(3)*1000);
-  Serial.print(",");
-  Serial.println(digitalRead(7)*1000);
+  print_4_digi(potentiometer0_Value);
+  print_4_digi(potentiometer1_Value);
+  print_4_digi(potentiometer2_Value);
 
-  delay(10);
+  if (digitalRead(3) != digitalRead(7))
+  {
+    Serial.print(digitalRead(3));
+  }
+  else
+  {
+    Serial.print(0);
+  }
+  Serial.print('D');
+  Serial.print('E');
+  Serial.print('F');
 
+  delay(100);
 }
